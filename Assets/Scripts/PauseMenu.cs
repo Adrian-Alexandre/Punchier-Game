@@ -34,5 +34,6 @@ public class PauseMenu : MonoBehaviour
     public void EditPlayer()
     {
         SceneManager.LoadScene("EditPlayer");
+        Time.timeScale = 1;
     }
 }
