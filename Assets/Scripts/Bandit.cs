@@ -8,19 +8,23 @@ public class Bandit : MonoBehaviour
     [SerializeField] private Rigidbody[] _ragRb;
     [SerializeField] private Collider[] _ragColliders;
     [SerializeField] private BoxCollider mainCollider;
-    
+    [SerializeField] private AudioSource audioSource;
+
     public PlayerMovement player;
     void Awake()
     {
         _ragRb = GetComponentsInChildren<Rigidbody>();
         _ragColliders = GetComponentsInChildren<Collider>();
+        GameObject audioObject = GameObject.Find("AudioPunch");
+        audioSource = audioObject.GetComponent<AudioSource>();
         DisableRagdoll();
     }
     private void OnCollisionEnter(Collision collision)
     {
         if (player.isPunching == true && collision.collider.tag == "Hand")
         {
-                EnableRagdoll();
+            EnableRagdoll();
+            audioSource.Play();
         }
     }
 
@@ -29,6 +33,7 @@ public class Bandit : MonoBehaviour
         if (player.isPunching == true && collision.collider.tag == "Hand")
         {
             EnableRagdoll();
+            audioSource.Play();
         }
     }
 
@@ -39,10 +44,11 @@ public class Bandit : MonoBehaviour
             col.enabled = false;
         }
 
-        foreach (Rigidbody rigid in _ragRb) 
-        { 
+        foreach (Rigidbody rigid in _ragRb)
+        {
             rigid.isKinematic = true;
         }
+
         GetComponent<Animator>().enabled = true;
         GetComponent<Collider>().enabled = true;
     }
@@ -61,6 +67,6 @@ public class Bandit : MonoBehaviour
             rigid.isKinematic = false;
         }
 
-        GetComponent<Collider>().enabled = false;
+       GetComponent<Collider>().enabled = false;
     }
 }

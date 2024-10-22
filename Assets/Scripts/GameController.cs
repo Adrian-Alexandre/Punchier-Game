@@ -22,6 +22,8 @@ public class GameController : MonoBehaviour
     public static void LoadData()
     {
         GameController.money = PlayerPrefs.GetFloat("Money");
+        GameController.empilhamentoIndex = PlayerPrefs.GetInt("EmpilhamentoIndex");
+        GameController.materialIndex = PlayerPrefs.GetFloat("MaterialIndex");
     }
 
     public static void SaveData()

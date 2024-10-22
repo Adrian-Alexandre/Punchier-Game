@@ -17,12 +17,19 @@ public class Sale : MonoBehaviour
     [System.Obsolete]
     private void OnTriggerStay(Collider other)
     {
-        sale.gameObject.active = true;
+        if (other.CompareTag("Player"))
+        {
+            sale.gameObject.active = true;
+        }
+        
     }
 
     [System.Obsolete]
     private void OnTriggerExit(Collider other)
     {
-        sale.gameObject.active = false;
+        if (other.CompareTag("Player"))
+        {
+            sale.gameObject.active = false;
+        }
     }
 }
