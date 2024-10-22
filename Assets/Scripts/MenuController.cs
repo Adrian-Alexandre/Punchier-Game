@@ -19,11 +19,16 @@ public class MenuController : MonoBehaviour
             score.text = "$ " + GameController.money.ToString() + ".00 ";
             scoreBackground.text = "$ " + GameController.money.ToString() + ".00 ";
         }
-        if(capacidade != null)
+        if (capacidade != null)
         {
             capacidade.text = "CAPACIDADE: " + GameController.empilhamentoIndex.ToString();
             capacidadeBackground.text = "CAPACIDADE: " + GameController.empilhamentoIndex.ToString();
         }
+    }
+
+    private void Awake()
+    {
+        GameController.SaveData();
     }
     public void StartGame()
     {
