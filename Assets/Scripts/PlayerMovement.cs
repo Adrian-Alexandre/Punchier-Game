@@ -32,8 +32,21 @@ public class PlayerMovement : MonoBehaviour
 
     public float gravityModifier = 10f;
 
+    float currentVelocity;
+    float currentSpeed;
+    float speedVelocity;
+    float MoveSpeed = 5f;
+
+    public bool enableMobileInputs = false;
+
+    public Transform cameraTranform;
+
+    public Transform playerTransform;
+
     void Start()
     {
+        cameraTranform = Camera.main.transform;
+
         if (GameController.materialIndex == 0)
         {
             skinnedMeshRenderer.material = material[0];
@@ -75,12 +88,16 @@ public class PlayerMovement : MonoBehaviour
                 }
             }
         }
+
+
+        
     }
 
     void FixedUpdate()
     {
-        MovementMobile();
-        if (isOnGround == true && moveH != 0 || moveV != 0)
+        // MovementMobile();
+        Movement(cameraTranform);
+        /*if (isOnGround == true && moveH != 0 || moveV != 0)
         {
             playerAnimator.SetBool("Walking", true);
         }
@@ -92,21 +109,63 @@ public class PlayerMovement : MonoBehaviour
         {
             playerAnimator.SetBool("Walking", false);
             isPunching = false;
-        }
+        }*/
 
     }
 
-    void MovementMobile()
+    /* void MovementMobile()
+     {
+         moveH = joystick.Horizontal;
+         moveV = joystick.Vertical;
+
+         Vector3 dir = new Vector3(moveH, 0, moveV);
+         rb.velocity = new Vector3(moveH * playerSpeed, rb.velocity.y, moveV * playerSpeed);
+
+         if (dir != Vector3.zero)
+         {
+             transform.LookAt(transform.position + dir);
+         }
+
+     }*/
+
+    void Movement(Transform cameraTransform)
     {
-        moveH = joystick.Horizontal;
-        moveV = joystick.Vertical;
+        Vector2 input = Vector2.zero;
 
-        Vector3 dir = new Vector3(moveH, 0, moveV);
-        rb.velocity = new Vector3(moveH * playerSpeed, rb.velocity.y, moveV * playerSpeed);
-
-        if (dir != Vector3.zero)
+        if (enableMobileInputs)
         {
-            transform.LookAt(transform.position + dir);
+            input = new Vector2(joystick.Horizontal, joystick.Vertical);
+        }
+        else
+        {
+
+        }
+         
+        Vector2 inputDir = input.normalized;
+
+
+        if (inputDir != Vector2.zero)
+        {
+            float rotation = Mathf.Atan2(inputDir.x, inputDir.y) * Mathf.Rad2Deg + cameraTransform.eulerAngles.y;
+            transform.eulerAngles = Vector3.up * Mathf.SmoothDampAngle(transform.eulerAngles.y, rotation, ref currentVelocity, 0.25f);
+        }
+
+        float targetSpeed = MoveSpeed * inputDir.magnitude;
+        currentSpeed = Mathf.SmoothDamp(currentSpeed, targetSpeed, ref speedVelocity, 0.1f);
+        transform.Translate(transform.forward * currentSpeed * Time.deltaTime, Space.World);
+
+        if (isOnGround == true && joystick.Horizontal != 0 || joystick.Vertical != 0)
+        {
+            playerAnimator.SetBool("Walking", true);
+        }
+        else if (playerAnimator.GetCurrentAnimatorStateInfo(0).IsName("Punch") && playerAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime < 1.0f)
+        {
+            isPunching = true;
+        }
+        else
+        {
+            playerAnimator.SetBool("Walking", false);
+            isPunching = false;
         }
     }
 
@@ -146,7 +205,7 @@ public class PlayerMovement : MonoBehaviour
             Collider[] otherColliders = other.GetComponentsInChildren<Collider>();
 
             otherRB.isKinematic = true;
-            otherTransform.rotation = Quaternion.Euler(-90, 220, 0);
+            otherTransform.rotation = Quaternion.Euler(stackPosition.rotation.x - 90, stackPosition.rotation.y, stackPosition.rotation.z);
             other.tag = gameObject.tag;
 
             foreach (Collider col in otherColliders)

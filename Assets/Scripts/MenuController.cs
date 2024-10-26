@@ -28,7 +28,7 @@ public class MenuController : MonoBehaviour
 
     private void Awake()
     {
-        GameController.SaveData();
+            GameController.SaveData();
     }
     public void StartGame()
     {

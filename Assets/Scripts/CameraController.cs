@@ -5,17 +5,33 @@ using UnityEngine;
 public class CameraController : MonoBehaviour
 {
     public Transform target;
+    public Transform pos;
 
     public float smoothSpeed;
 
     public Vector3 offset;
+    private RaycastHit hit;
+    public Vector3 vel = Vector3.zero;
 
     // Update is called once per frame
     void LateUpdate()
     {
-        Vector3 desiredPos = target.position + offset;
-        Vector3 smoothedPos = Vector3.Lerp(transform.position, desiredPos, smoothSpeed);
-        transform.position = smoothedPos;
         transform.LookAt(target);
+
+        Vector3 desiredPos = target.position + pos.position;
+
+        if (!Physics.Linecast(target.position, desiredPos))
+        {
+            transform.position = Vector3.SmoothDamp(transform.position, desiredPos, ref vel, 0.4f); ;
+        }
+        else if (!Physics.Linecast(target.position, desiredPos, out hit))
+        {
+            transform.position = Vector3.SmoothDamp(transform.position, hit.point, ref vel, 0.4f);
+        }
+
+        
+         /*Vector3 smoothedPos = Vector3.Lerp(transform.position, desiredPos, smoothSpeed);
+         transform.position = smoothedPos;*/
+         
     }
 }
