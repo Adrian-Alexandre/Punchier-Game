@@ -4,69 +4,67 @@ using UnityEngine;
 
 public class SelectColor : MonoBehaviour
 {
-
+    // Array para armazenar os materiais
     public Material[] material;
     [SerializeField] private SkinnedMeshRenderer skinnedMeshRenderer;
 
-
+    // Método chamado ao iniciar o script
     private void Start()
     {
-        if (GameController.materialIndex == 0)
+        // Define o material inicial baseado no índice do GameController
+        UpdateMaterial(GameController.materialIndex);
+    }
+
+    // Método para atualizar o material da mesh
+    private void UpdateMaterial(int index)
+    {
+        if (index >= 0 && index < material.Length)
         {
-            skinnedMeshRenderer.material = material[0];
+            skinnedMeshRenderer.material = material[index];
         }
-        if (GameController.materialIndex == 1)
+        else
         {
-            skinnedMeshRenderer.material = material[1];
-        }
-        if (GameController.materialIndex == 2)
-        {
-            skinnedMeshRenderer.material = material[2];
-        }
-        if (GameController.materialIndex == 3)
-        {
-            skinnedMeshRenderer.material = material[3];
+            Debug.LogWarning("Índice de material fora do alcance!");
         }
     }
+
+    // Método para trocar o material para Vermelho
     public void Vermelho()
     {
-        if (GameController.money >= 10)
-        {
-            skinnedMeshRenderer.sharedMaterial = material[1];
-            GameController.materialIndex = 1;
-            GameController.money -= 10;
-            GameController.SaveData();
-        }
-
+        TrocaMaterial(1);
     }
+
+    // Método para trocar o material para Azul
     public void Azul()
     {
-        if (GameController.money >= 10)
-        {
-            skinnedMeshRenderer.sharedMaterial = material[0];
-            GameController.materialIndex = 0;
-            GameController.money -= 10;
-            GameController.SaveData();
-        }
+        TrocaMaterial(0);
     }
+
+    // Método para trocar o material para Verde
     public void Verde()
     {
+        TrocaMaterial(3);
+    }
+
+    // Método para trocar o material para Amarelo
+    public void Amarelo()
+    {
+        TrocaMaterial(2);
+    }
+
+    // Método genérico para trocar o material e atualizar o GameController
+    private void TrocaMaterial(int index)
+    {
         if (GameController.money >= 10)
         {
-            skinnedMeshRenderer.sharedMaterial = material[3];
-            GameController.materialIndex = 3;
+            skinnedMeshRenderer.sharedMaterial = material[index];
+            GameController.materialIndex = index;
             GameController.money -= 10;
             GameController.SaveData();
         }
-    }
-    public void Amarelo()
-    {
-        if (GameController.money >= 10) 
-        { 
-            skinnedMeshRenderer.sharedMaterial = material[2];
-            GameController.materialIndex = 2;
-            GameController.money -= 10;
-            GameController.SaveData();
+        else
+        {
+            Debug.LogWarning("Dinheiro insuficiente!");
         }
     }
 }

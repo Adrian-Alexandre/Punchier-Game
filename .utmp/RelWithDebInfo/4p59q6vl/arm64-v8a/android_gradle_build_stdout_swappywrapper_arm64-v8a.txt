@@ -1,0 +1,3 @@
+ninja: Entering directory `F:\Unity Projetos\Gym Beast  67 Bits Project\.utmp\RelWithDebInfo\4p59q6vl\arm64-v8a'
+[1/2] Building CXX object FramePacing/CMakeFiles/swappywrapper.dir/UnitySwappyWrapper.cpp.o
+[2/2] Linking CXX shared library "F:\Unity Projetos\Gym Beast  67 Bits Project\Library\Bee\Android\Prj\IL2CPP\Gradle\unityLibrary\build\intermediates\cxx\RelWithDebInfo\4p59q6vl\obj\arm64-v8a\libswappywrapper.so"

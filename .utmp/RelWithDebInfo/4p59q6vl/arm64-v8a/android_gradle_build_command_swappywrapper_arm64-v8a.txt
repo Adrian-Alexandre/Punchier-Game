@@ -1,0 +1,7 @@
+Executable : F:\Unity Editor\2023.1.15f1\Editor\Data\PlaybackEngines\AndroidPlayer\SDK\cmake\3.22.1\bin\ninja.exe
+arguments : 
+-C
+F:\Unity Projetos\Gym Beast  67 Bits Project\.utmp\RelWithDebInfo\4p59q6vl\arm64-v8a
+swappywrapper
+jvmArgs : 
+

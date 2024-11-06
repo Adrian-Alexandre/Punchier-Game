@@ -28,10 +28,6 @@ public class CameraController : MonoBehaviour
         {
             transform.position = Vector3.SmoothDamp(transform.position, hit.point, ref vel, 0.4f);
         }
-
-        
-         /*Vector3 smoothedPos = Vector3.Lerp(transform.position, desiredPos, smoothSpeed);
-         transform.position = smoothedPos;*/
          
     }
 }

@@ -8,6 +8,7 @@ TagManager:
   - Enemy
   - Hand
   - Sale
+  - StackPosition
   layers:
   - Default
   - TransparentFX

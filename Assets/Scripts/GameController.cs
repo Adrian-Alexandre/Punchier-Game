@@ -1,51 +1,55 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using System.Linq;
-using UnityEngine.SceneManagement;
 
 public class GameController : MonoBehaviour
 {
+    // Variáveis estáticas para armazenar dinheiro, índice do material e índice do empilhamento
     public static float money;
-    public static float materialIndex;
+    public static int materialIndex;
     public static int empilhamentoIndex = 1;
+
+    // Referências aos elementos UI para exibir o score
     public Text score;
     public Text scoreBackground;
     public PauseMenu pauseMenu;
 
-    void Start()
+    // Método chamado quando o script é inicializado
+    void Awake()
     {
-        GameController.LoadData();
+        GameController.LoadData(); // Carrega os dados salvos do jogo
     }
 
+    // Método estático para carregar os dados do PlayerPrefs
     public static void LoadData()
     {
-        GameController.money = PlayerPrefs.GetFloat("Money");
         GameController.empilhamentoIndex = PlayerPrefs.GetInt("EmpilhamentoIndex");
-        GameController.materialIndex = PlayerPrefs.GetFloat("MaterialIndex");
+        GameController.materialIndex = PlayerPrefs.GetInt("MaterialIndex");
+        GameController.money = PlayerPrefs.GetFloat("Money");
     }
 
+    // Método estático para salvar os dados no PlayerPrefs
     public static void SaveData()
     {
-            PlayerPrefs.SetInt("EmpilhamentoIndex", GameController.empilhamentoIndex);
-            PlayerPrefs.SetFloat("MaterialIndex", GameController.materialIndex);
-            PlayerPrefs.SetFloat("Money", GameController.money);
-            PlayerPrefs.Save();
+        PlayerPrefs.SetInt("EmpilhamentoIndex", GameController.empilhamentoIndex);
+        PlayerPrefs.SetInt("MaterialIndex", GameController.materialIndex);
+        PlayerPrefs.SetFloat("Money", GameController.money);
+        PlayerPrefs.Save(); // Salva as alterações feitas
     }
 
+    // Método chamado a cada frame
     void Update()
     {
-        if(score != null)
+        // Atualiza o texto do score e seu fundo
+        if (score != null)
         {
-            score.text = "$ " + GameController.money.ToString() + ".00 " ;
+            score.text = "$ " + GameController.money.ToString() + ".00 ";
             scoreBackground.text = "$ " + GameController.money.ToString() + ".00 ";
         }
 
-        if(Input.GetKey(KeyCode.Escape))
+        // Verifica se a tecla ESC foi pressionada para pausar o jogo
+        if (Input.GetKey(KeyCode.Escape))
         {
-            pauseMenu.Pause();
+            pauseMenu.Pause(); // Chama o método Pause do PauseMenu
         }
     }
-    
 }

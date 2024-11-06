@@ -1,0 +1,5 @@
+F:/Unity Projetos/Gym Beast  67 Bits Project/.utmp/RelWithDebInfo/4p59q6vl/armeabi-v7a/CMakeFiles/edit_cache.dir
+F:/Unity Projetos/Gym Beast  67 Bits Project/.utmp/RelWithDebInfo/4p59q6vl/armeabi-v7a/CMakeFiles/rebuild_cache.dir
+F:/Unity Projetos/Gym Beast  67 Bits Project/.utmp/RelWithDebInfo/4p59q6vl/armeabi-v7a/FramePacing/CMakeFiles/swappywrapper.dir
+F:/Unity Projetos/Gym Beast  67 Bits Project/.utmp/RelWithDebInfo/4p59q6vl/armeabi-v7a/FramePacing/CMakeFiles/edit_cache.dir
+F:/Unity Projetos/Gym Beast  67 Bits Project/.utmp/RelWithDebInfo/4p59q6vl/armeabi-v7a/FramePacing/CMakeFiles/rebuild_cache.dir
