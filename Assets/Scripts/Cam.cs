@@ -50,7 +50,7 @@ public class Cam : MonoBehaviour
         // Aplica a rotação calculada à câmera
         transform.eulerAngles = targetRotation;
 
-        // Posiciona a câmera atrás do alvo a uma distância fixa de 10 unidades
-        transform.position = target.position - transform.forward * 10f;
+        // Posiciona a câmera atrás do alvo a uma distância fixa de 7 unidades
+        transform.position = target.position - transform.forward * 7f;
     }
 }

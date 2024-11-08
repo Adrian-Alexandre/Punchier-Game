@@ -1,12 +1,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using UnityEngine.Windows;
 
 public class PlayerMovement : MonoBehaviour
 {
     // Variáveis privadas e serializadas para controle de velocidade do jogador e distância mínima para manter entre inimigos
-    [SerializeField] private float playerSpeed, distance;
+    [SerializeField] private float distance;
     [SerializeField] private Transform stackPosition; // Posição onde inimigos empilhados serão armazenados
+    [SerializeField] private Transform player;
     [SerializeField] private SkinnedMeshRenderer skinnedMeshRenderer;
     // Componentes adicionais para controle de aparência e animação
     [SerializeField] private Material[] material;
@@ -16,7 +18,7 @@ public class PlayerMovement : MonoBehaviour
     private Rigidbody rb;  // Referência ao componente Rigidbody do jogador
     private Transform parentPickup;  // Guarda a referência do objeto pai ao empilhar
     private bool isOnGround;          // Flag para verificar se o jogador está no chão
-    private float followSpeed = 20f;  // Velocidade de perseguição dos inimigos
+    private float followSpeed = 10f;  // Velocidade de perseguição dos inimigos
     // Variáveis para controle de velocidade e suavidade do movimento
     private float currentVelocity;
     private float currentSpeed;
@@ -40,9 +42,11 @@ public class PlayerMovement : MonoBehaviour
     void FixedUpdate()
     {
         // Chama o método de movimentação a cada frame fixo
-        Movement(cameraTransform);  
+        Movement(cameraTransform);
         // Verifica se há mais de um inimigo na lista para controlar o espaçamento entre eles
-        UpdateEnemyPositions();
+        UpdateEnemyPositions(cameraTransform);
+        // Aumenta a força da gravidade
+        Gravity();
     }
 
     // Método responsável por inicializar os componentes
@@ -90,10 +94,34 @@ public class PlayerMovement : MonoBehaviour
         currentSpeed = Mathf.SmoothDamp(currentSpeed, targetSpeed, ref speedVelocity, 0.1f);
         transform.Translate(transform.forward * currentSpeed * Time.deltaTime, Space.World);
 
-        // Configura a animação com base no estado de movimento e de soco
-        if (isOnGround == true && joystick.Horizontal != 0 || joystick.Vertical != 0)
+        // Define as animações baseadas na magnitude do input
+        float inputMagnitude = input.magnitude;
+
+        if (inputMagnitude == 0)
         {
+            // Jogador parado
+            playerAnimator.SetBool("Walking", false);
+            playerAnimator.SetBool("Running", false);
+            MoveSpeed = 0f;
+        }
+        else if (inputMagnitude > 0 && inputMagnitude < 0.5f)
+        {
+            // Jogador andando
             playerAnimator.SetBool("Walking", true);
+            playerAnimator.SetBool("Running", false);
+            MoveSpeed = 5f;
+        }
+        else if (inputMagnitude >= 0.5f)
+        {
+            // Jogador correndo
+            playerAnimator.SetBool("Walking", false);
+            playerAnimator.SetBool("Running", true);
+            MoveSpeed = 8f;
+        }
+
+        // Verifica se o jogador está no chão e não está socando
+        if (isOnGround && !playerAnimator.GetCurrentAnimatorStateInfo(0).IsName("Punch"))
+        {
             isPunching = false;
         }
         else if (playerAnimator.GetCurrentAnimatorStateInfo(0).IsName("Punch") && playerAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime < 1.0f)
@@ -102,14 +130,28 @@ public class PlayerMovement : MonoBehaviour
         }
         else
         {
-            playerAnimator.SetBool("Walking", false);
+            playerAnimator.SetBool("Running", false);
             isPunching = false;
         }
     }
 
-    // Método responsável pela movimentação dos inimigos na pilha
-    private void UpdateEnemyPositions()
+    void Gravity()
     {
+        // Aumenta a força da gravidade 
+        Vector3 customGravity = new Vector3(0, -40f, 0);
+        GetComponent<Rigidbody>().AddForce(customGravity, ForceMode.Acceleration);
+    }
+    // Método responsável pela movimentação dos inimigos na pilha
+    private void UpdateEnemyPositions(Transform cameraTransform)
+    {
+        Vector2 input = Vector2.zero;
+
+        // Se os controles móveis estiverem ativados, usa o joystick para o input
+        if (enableMobileInputs)
+        {
+            input = new Vector2(joystick.Horizontal, joystick.Vertical);
+        }
+        Vector2 inputDir = input.normalized;
         // Verifica se há mais de um inimigo na lista para controlar o espaçamento entre eles
         if (Enemies.Count > 1)
         {
@@ -125,10 +167,15 @@ public class PlayerMovement : MonoBehaviour
                 // Ajusta a posição do inimigo atual se a distância for menor que o valor de `Distance`
                 if (DesireDistance <= distance)
                 {
-                    sectEnemy.transform.rotation = Quaternion.Euler(sectEnemy.transform.rotation.x - 90, sectEnemy.transform.rotation.y, sectEnemy.transform.rotation.z);
+                    // Gira o inimigo empilhado na direção do input
+                    if (inputDir != Vector2.zero)
+                    {
+                        float rotation = Mathf.Atan2(inputDir.x, inputDir.y) * Mathf.Rad2Deg + cameraTransform.eulerAngles.y;
+                        sectEnemy.transform.eulerAngles = new Vector3(-90, Mathf.SmoothDampAngle(transform.eulerAngles.y, rotation, ref currentVelocity, 0.25f), - 90);
+                    }
                     sectEnemy.transform.position = new Vector3(
                         Mathf.Lerp(sectEnemy.transform.position.x, lastEnemy.transform.position.x, followSpeed * Time.deltaTime),
-                        lastEnemy.transform.position.y + 0.6f,
+                        lastEnemy.transform.position.y + 0.5f,
                         Mathf.Lerp(sectEnemy.transform.position.z, lastEnemy.transform.position.z, followSpeed * Time.deltaTime)
                     );
                 }

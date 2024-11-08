@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Bandit : MonoBehaviour
@@ -33,7 +34,16 @@ public class Bandit : MonoBehaviour
         {
             EnableRagdoll();  // Ativa o Ragdoll
             audioSource.Play();  // Reproduz o som do soco
+
+            // Itera por todos os rigidbodies do ragdoll
+            foreach (Rigidbody rigidbody in _ragRb)
+            {
+                // Calcula a direção e força do impulso
+                Vector3 direction = rigidbody.transform.position - collision.contacts[0].point;
+                rigidbody.AddForce(direction.normalized * 70, ForceMode.Impulse);
+            }
         }
+
     }
 
     // Mantém o Ragdoll ativado enquanto o jogador está socando e a colisão é com a mão
@@ -43,6 +53,14 @@ public class Bandit : MonoBehaviour
         {
             EnableRagdoll();
             audioSource.Play();
+            
+            // Itera por todos os rigidbodies do ragdoll
+            foreach (Rigidbody rigidbody in _ragRb)
+            {
+                // Calcula a direção e força do impulso
+                Vector3 direction = rigidbody.transform.position - collision.contacts[0].point;
+                rigidbody.AddForce(direction.normalized * 70, ForceMode.Impulse);
+            }
         }
     }
 
