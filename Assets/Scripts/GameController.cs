@@ -50,6 +50,7 @@ public class GameController : MonoBehaviour
         if (Input.GetKey(KeyCode.Escape))
         {
             pauseMenu.Pause(); // Chama o método Pause do PauseMenu
+            SaveData(); // Salva os dados do jogo
         }
     }
 }

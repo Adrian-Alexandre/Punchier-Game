@@ -28,29 +28,25 @@ public class MenuController : MonoBehaviour
         }
     }
 
-    // Método chamado quando o script é inicializado
-    private void Awake()
-    {
-        GameController.SaveData(); // Salva os dados do jogo
-    }
-
     // Método para iniciar o jogo
     public void StartGame()
     {
         SceneManager.LoadScene("Main"); // Carrega a cena principal do jogo
         GameController.LoadData(); // Carrega os dados do jogo
+        GameController.SaveData(); // Salva os dados do jogo
     }
 
     // Método para sair do jogo
     public void ExitGame()
-    {
+    { 
         Application.Quit(); // Encerra o aplicativo
     }
 
     // Método para voltar ao menu principal
     public void BackToMainMenu()
     {
-        SceneManager.LoadScene("Menu"); // Carrega a cena do menu
+        GameController.SaveData(); // Salva os dados do jogo
+        SceneManager.LoadScene("Menu"); // Carrega a cena do menu    
     }
 
     // Método para editar o jogador
@@ -62,7 +58,7 @@ public class MenuController : MonoBehaviour
     // Método para adicionar empilhamento
     public void AddEmpilhamento()
     {
-        if (GameController.money >= 30 && GameController.empilhamentoIndex < 10)
+        if (GameController.money >= 30)
         {
             GameController.empilhamentoIndex += 1; // Incrementa o índice de empilhamento
             GameController.money -= 30; // Deduz o custo do dinheiro

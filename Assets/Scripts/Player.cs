@@ -1,24 +1,23 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
-using UnityEngine.Windows;
+using System.Collections;
 
-public class PlayerMovement : MonoBehaviour
+public class Player : MonoBehaviour
 {
-    // Variáveis privadas e serializadas para controle de velocidade do jogador e distância mínima para manter entre inimigos
-    [SerializeField] private float distance;
+    // Variáveis privadas e serializadas para controle de velocidade do jogador
     [SerializeField] private Transform stackPosition; // Posição onde inimigos empilhados serão armazenados
-    [SerializeField] private Transform player;
-    [SerializeField] private SkinnedMeshRenderer skinnedMeshRenderer;
+    [SerializeField] private SkinnedMeshRenderer skinnedMeshRenderer; // Referência o renderer do player
     // Componentes adicionais para controle de aparência e animação
-    [SerializeField] private Material[] material;
-    [SerializeField] private Animator playerAnimator;
+    [SerializeField] private Material[] material; // Referência o material que será alocado ao renderer do player
+    [SerializeField] private Animator playerAnimator; // Referência o animator do player
     
     private FixedJoystick joystick;  // Referência ao joystick fixo (para dispositivos móveis)
     private Rigidbody rb;  // Referência ao componente Rigidbody do jogador
     private Transform parentPickup;  // Guarda a referência do objeto pai ao empilhar
     private bool isOnGround;          // Flag para verificar se o jogador está no chão
-    private float followSpeed = 10f;  // Velocidade de perseguição dos inimigos
+    private float followSpeed = 20f;  // Velocidade de perseguição dos inimigos na piha
+    
     // Variáveis para controle de velocidade e suavidade do movimento
     private float currentVelocity;
     private float currentSpeed;
@@ -26,8 +25,8 @@ public class PlayerMovement : MonoBehaviour
     private float MoveSpeed = 5f;
 
     public Transform cameraTransform;  // Referência à câmera principal
-    public List<GameObject> Enemies = new List<GameObject>(); // Criação de uma lista para armazenar inimigos capturados (o jogador é adicionado como primeiro elemento)
-    public bool isPunching;          // Flag para verificar se o jogador está socando
+    public List<GameObject> Enemies = new List<GameObject>(); // Criação de uma lista para armazenar inimigos capturados (stackposition é adicionado como primeiro elemento)
+    public bool isPunching; // Flag para verificar se o jogador está socando
 
     public bool enableMobileInputs = false;  // Controle para ativar inputs móveis
 
@@ -38,15 +37,14 @@ public class PlayerMovement : MonoBehaviour
         // Define o material do jogador
         SetPlayerMaterial(GameController.materialIndex);
     }
-
     void FixedUpdate()
     {
         // Chama o método de movimentação a cada frame fixo
         Movement(cameraTransform);
-        // Verifica se há mais de um inimigo na lista para controlar o espaçamento entre eles
-        UpdateEnemyPositions(cameraTransform);
         // Aumenta a força da gravidade
         Gravity();
+        // Verifica se há mais de um inimigo na lista para controlar o espaçamento entre eles
+        UpdateEnemyPositions(cameraTransform);
     }
 
     // Método responsável por inicializar os componentes
@@ -116,7 +114,7 @@ public class PlayerMovement : MonoBehaviour
             // Jogador correndo
             playerAnimator.SetBool("Walking", false);
             playerAnimator.SetBool("Running", true);
-            MoveSpeed = 8f;
+            MoveSpeed = 10f;
         }
 
         // Verifica se o jogador está no chão e não está socando
@@ -135,12 +133,20 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
+    // Método para adicionar gravidade ao jogo
     void Gravity()
     {
         // Aumenta a força da gravidade 
-        Vector3 customGravity = new Vector3(0, -40f, 0);
+        Vector3 customGravity = new Vector3(0, -80f, 0);
         GetComponent<Rigidbody>().AddForce(customGravity, ForceMode.Acceleration);
     }
+
+    // Método para ativar a animação de soco
+    public void Punch()
+    {
+        playerAnimator.SetTrigger("Punch");
+    }
+
     // Método responsável pela movimentação dos inimigos na pilha
     private void UpdateEnemyPositions(Transform cameraTransform)
     {
@@ -152,6 +158,7 @@ public class PlayerMovement : MonoBehaviour
             input = new Vector2(joystick.Horizontal, joystick.Vertical);
         }
         Vector2 inputDir = input.normalized;
+
         // Verifica se há mais de um inimigo na lista para controlar o espaçamento entre eles
         if (Enemies.Count > 1)
         {
@@ -161,63 +168,18 @@ public class PlayerMovement : MonoBehaviour
                 var lastEnemy = Enemies.ElementAt(i - 1);
                 var sectEnemy = Enemies.ElementAt(i);
 
-                // Calcula a distância desejada entre o inimigo atual e o anterior
-                var DesireDistance = Vector3.Distance(sectEnemy.transform.position, lastEnemy.transform.position);
-
-                // Ajusta a posição do inimigo atual se a distância for menor que o valor de `Distance`
-                if (DesireDistance <= distance)
-                {
                     // Gira o inimigo empilhado na direção do input
                     if (inputDir != Vector2.zero)
                     {
                         float rotation = Mathf.Atan2(inputDir.x, inputDir.y) * Mathf.Rad2Deg + cameraTransform.eulerAngles.y;
                         sectEnemy.transform.eulerAngles = new Vector3(-90, Mathf.SmoothDampAngle(transform.eulerAngles.y, rotation, ref currentVelocity, 0.25f), - 90);
                     }
-                    sectEnemy.transform.position = new Vector3(
+
+                sectEnemy.transform.position = new Vector3(
                         Mathf.Lerp(sectEnemy.transform.position.x, lastEnemy.transform.position.x, followSpeed * Time.deltaTime),
                         lastEnemy.transform.position.y + 0.5f,
-                        Mathf.Lerp(sectEnemy.transform.position.z, lastEnemy.transform.position.z, followSpeed * Time.deltaTime)
-                    );
-                }
+                        Mathf.Lerp(sectEnemy.transform.position.z, lastEnemy.transform.position.z, followSpeed * Time.deltaTime));
             }
-        }
-    }
-
-    // Método para remover todos os inimigos exceto o primeiro da lista
-    public void SaleEnemy()
-    {
-        for (int i = 1; i < Enemies.Count; i++)
-        {
-            Destroy(Enemies[i]);  // Destroi o inimigo e aumenta o dinheiro
-            GameController.money += 10;
-        }
-
-        // Mantém o primeiro elemento da lista e remove os outros
-        Enemies = new List<GameObject> { Enemies[0] };
-        GameController.SaveData();
-    }
-
-    // Método para ativar a animação de soco
-    public void Punch()
-    {
-        playerAnimator.SetTrigger("Punch");
-    }
-
-    // Verifica se o jogador está no chão ao colidir com objetos que têm a tag "Ground"
-    private void OnCollisionEnter(Collision collision)
-    {
-        if (collision.gameObject.CompareTag("Ground"))
-        {
-            isOnGround = true;
-        }
-    }
-
-    // Método que adiciona inimigos à lista ao entrar em um trigger com a tag "Enemy"
-    private void OnTriggerEnter(Collider other)
-    {
-        if (other.tag == "Enemy" && !isPunching && Enemies.Count <= GameController.empilhamentoIndex)
-        {
-            AddEnemyToStack(other);
         }
     }
 
@@ -250,4 +212,23 @@ public class PlayerMovement : MonoBehaviour
             otherTransform.parent = parentPickup;
         }
     }
+
+    // Verifica se o jogador está no chão ao colidir com objetos que têm a tag "Ground"
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("Ground"))
+        {
+            isOnGround = true;
+        }
+    }
+
+    // Método que adiciona inimigos à lista ao entrar em um trigger com a tag "Enemy"
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.tag == "Enemy" && !isPunching && Enemies.Count <= GameController.empilhamentoIndex)
+        {
+            AddEnemyToStack(other);
+        }
+    }
+
 }

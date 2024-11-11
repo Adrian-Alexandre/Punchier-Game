@@ -1,4 +1,3 @@
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class Bandit : MonoBehaviour
@@ -7,9 +6,10 @@ public class Bandit : MonoBehaviour
     [SerializeField] private Rigidbody[] _ragRb;      // Array de Rigidbodies para o efeito Ragdoll
     [SerializeField] private Collider[] _ragColliders; // Array de Colliders para o efeito Ragdoll
     [SerializeField] private AudioSource audioSource;  // Fonte de áudio para o som do soco
+    [SerializeField] private ParticleSystem blood; // Particula para efeito de soco
 
-    // Referência ao movimento do jogador
-    public PlayerMovement player;
+    // Referência o jogador
+    public Player player;
 
     // Inicializa o Ragdoll e configurações de áudio
     void Awake()
@@ -38,12 +38,17 @@ public class Bandit : MonoBehaviour
             // Itera por todos os rigidbodies do ragdoll
             foreach (Rigidbody rigidbody in _ragRb)
             {
-                // Calcula a direção e força do impulso
+                // Calcula a direção, força do impulso e adiciona o efeito de particula no contato
                 Vector3 direction = rigidbody.transform.position - collision.contacts[0].point;
-                rigidbody.AddForce(direction.normalized * 70, ForceMode.Impulse);
-            }
-        }
+                Vector3 collisionpoint = collision.contacts[0].point;
+                
+                ParticleSystem effect = Instantiate(blood, collisionpoint, Quaternion.identity);
 
+                effect.Play();
+
+                rigidbody.AddForce(direction.normalized * 90, ForceMode.Impulse);    
+            }
+        }        
     }
 
     // Mantém o Ragdoll ativado enquanto o jogador está socando e a colisão é com a mão
@@ -59,7 +64,13 @@ public class Bandit : MonoBehaviour
             {
                 // Calcula a direção e força do impulso
                 Vector3 direction = rigidbody.transform.position - collision.contacts[0].point;
-                rigidbody.AddForce(direction.normalized * 70, ForceMode.Impulse);
+                Vector3 collisionpoint = collision.contacts[0].point;
+
+                ParticleSystem effect = Instantiate(blood, collisionpoint, Quaternion.identity);
+
+                effect.Play();
+
+                rigidbody.AddForce(direction.normalized * 90, ForceMode.Impulse);
             }
         }
     }

@@ -7,8 +7,14 @@ TagManager:
   - Ground
   - Enemy
   - Hand
-  - Sale
   - StackPosition
+  - Arrest
+  - Building
+  - Car
+  - Plant
+  - Road
+  - StreetItems
+  - Colliders
   layers:
   - Default
   - TransparentFX

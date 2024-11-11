@@ -74,9 +74,9 @@ GameObject:
   m_Component:
   - component: {fileID: 2733223331842782090}
   - component: {fileID: 2980670863995727413}
-  - component: {fileID: 2236666448739290112}
   - component: {fileID: 2665831087590514259}
   - component: {fileID: 3575881774923484287}
+  - component: {fileID: 7162297647728980628}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -107,7 +107,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!95 &2980670863995727413
 Animator:
-  serializedVersion: 5
+  serializedVersion: 7
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -121,34 +121,12 @@ Animator:
   m_ApplyRootMotion: 1
   m_LinearVelocityBlending: 0
   m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &2236666448739290112
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 754118339969920424}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: df414a9715b09b1499a019e776eeb47f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  playerSpeed: 5
-  distance: 2
-  rb: {fileID: 2665831087590514259}
-  dir: {x: 0, y: 0, z: 0}
-  playerAnimator: {fileID: 2980670863995727413}
-  isPunching: 0
-  isOnGround: 0
-  parentPickup: {fileID: 0}
-  stackPosition: {fileID: 7891372058196318179}
-  Enemies: []
-  material: []
 --- !u!54 &2665831087590514259
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -199,6 +177,28 @@ CapsuleCollider:
   m_Height: 2.6852124
   m_Direction: 1
   m_Center: {x: 0, y: 1.3402122, z: 0}
+--- !u!114 &7162297647728980628
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 754118339969920424}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: df414a9715b09b1499a019e776eeb47f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  distance: 0
+  stackPosition: {fileID: 0}
+  player: {fileID: 0}
+  skinnedMeshRenderer: {fileID: 0}
+  material: []
+  playerAnimator: {fileID: 0}
+  cameraTransform: {fileID: 0}
+  Enemies: []
+  isPunching: 0
+  enableMobileInputs: 0
 --- !u!1 &761946661430603843
 GameObject:
   m_ObjectHideFlags: 0
@@ -1419,7 +1419,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1447349771492648417, guid: d1945f2796836a542b7eea48290e25a6,
         type: 3}
-      propertyPath: m_Materials.Array.data[0]
+      propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: 0e455b2434a2c9d4395ca7f8ee5074cd, type: 2}
     - target: {fileID: 4211300125006045998, guid: d1945f2796836a542b7eea48290e25a6,
@@ -1498,7 +1498,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 742385118438055961, guid: 1c33b2d42586fed4784b40771ed7dc11,
         type: 3}
-      propertyPath: m_Materials.Array.data[0]
+      propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: 0e455b2434a2c9d4395ca7f8ee5074cd, type: 2}
     - target: {fileID: 1329033959637210309, guid: 1c33b2d42586fed4784b40771ed7dc11,
