@@ -10,6 +10,17 @@ public class MenuController : MonoBehaviour
     public Text capacidade;
     public Text capacidadeBackground;
 
+    void Awake()
+    {
+        if (PlayerPrefs.GetInt("EmpilhamentoIndex") != 0)
+        {
+            GameController.LoadData(); // Carrega os dados salvos do jogo
+        }
+        else
+        {
+            GameController.empilhamentoIndex = 1;
+        }
+    }
     // Método chamado a cada frame
     private void Update()
     {
@@ -32,8 +43,6 @@ public class MenuController : MonoBehaviour
     public void StartGame()
     {
         SceneManager.LoadScene("Main"); // Carrega a cena principal do jogo
-        GameController.LoadData(); // Carrega os dados do jogo
-        GameController.SaveData(); // Salva os dados do jogo
     }
 
     // Método para sair do jogo

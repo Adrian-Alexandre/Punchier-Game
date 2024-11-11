@@ -6,7 +6,7 @@ public class GameController : MonoBehaviour
     // Variáveis estáticas para armazenar dinheiro, índice do material e índice do empilhamento
     public static float money;
     public static int materialIndex;
-    public static int empilhamentoIndex = 1;
+    public static int empilhamentoIndex;
 
     // Referências aos elementos UI para exibir o score
     public Text score;
@@ -16,7 +16,14 @@ public class GameController : MonoBehaviour
     // Método chamado quando o script é inicializado
     void Awake()
     {
-        GameController.LoadData(); // Carrega os dados salvos do jogo
+        if(PlayerPrefs.GetInt("EmpilhamentoIndex") != 0)
+        {
+            GameController.LoadData(); // Carrega os dados salvos do jogo
+        }
+        else
+        {
+            GameController.empilhamentoIndex = 1;
+        }      
     }
 
     // Método estático para carregar os dados do PlayerPrefs

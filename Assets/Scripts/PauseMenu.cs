@@ -9,7 +9,8 @@ public class PauseMenu : MonoBehaviour
     // Método para pausar o jogo
     public void Pause()
     {
-        PausePanel.SetActive(true);  // Exibe o painel de pausa
+        PausePanel.SetActive(true);
+        GameController.SaveData();// Exibe o painel de pausa
         Time.timeScale = 0;          // Congela o tempo do jogo, pausando todas as ações
     }
 
